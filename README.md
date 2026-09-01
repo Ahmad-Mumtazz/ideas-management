@@ -121,35 +121,6 @@ Security is enforced on the server side.
 * Laravel Policies
 * Laravel Form Requests
 
-## Project Structure
-
-```text
-app/
-├── Enums/
-├── Http/
-│   ├── Controllers/
-│   └── Requests/
-├── Models/
-├── Observers/
-├── Policies/
-├── Providers/
-├── Support/
-└── View/
-    └── Components/
-
-database/
-├── factories/
-├── migrations/
-└── seeders/
-
-resources/
-├── css/
-├── js/
-└── views/
-
-routes/
-└── web.php
-```
 
 ## Requirements
 
@@ -285,8 +256,5 @@ The application is designed to remain simple and maintainable without unnecessar
 
 This project is for personal/educational development and can be modified as needed.
 
-```
 
-One small recommendation: **don't put your actual database name, username, password, email credentials, or API keys in the README.** Use placeholders as above.
-```
 
