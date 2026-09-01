@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/*
+ * Dark mode is driven by a `.dark` class on <html>, which the Alpine theme
+ * store toggles, rather than by the OS preference alone. This lets the user
+ * override their system setting from the navbar.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased;
+        @apply dark:bg-slate-950 dark:text-slate-100;
+    }
+
+    /* A visible, consistent focus ring in both themes. */
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-indigo-500;
+    }
+
+    /* Make native date pickers legible on a dark background. */
+    .dark input[type='date']::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+}
+
+@layer components {
+    /* Shared field styling so every input, select and textarea matches. */
+    .field {
+        @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900
+               placeholder:text-slate-400 shadow-sm transition
+               focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none;
+        @apply dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500
+               dark:focus:border-indigo-400 dark:focus:ring-indigo-400/30;
+    }
+
+    .field-error {
+        @apply border-rose-500 focus:border-rose-500 focus:ring-rose-500/30
+               dark:border-rose-500 dark:focus:border-rose-400;
+    }
+
+    .label {
+        @apply mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300;
+    }
+
+    .card-surface {
+        @apply rounded-2xl border border-slate-200 bg-white shadow-sm
+               dark:border-slate-800 dark:bg-slate-900;
+    }
+}
+
+/*
+ * Hide elements that only exist once Alpine has initialised, so no unstyled
+ * dropdown or modal flashes on first paint.
+ */
+[x-cloak] {
+    display: none !important;
+}
