@@ -1,58 +1,292 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ideas Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern Laravel-based web application for managing ideas, tracking their progress, and organizing all resources related to each idea in one place.
 
-## About Laravel
+Users can create and manage their own ideas, add checkpoints, attach links and files, track progress, and organize ideas using statuses, priorities, categories, tags, and due dates.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Authentication
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* User registration
+* Secure login and logout
+* Password validation
+* Session-based authentication
+* Protected authenticated areas
 
-## Learning Laravel
+### Idea Management
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* Create ideas
+* View all personal ideas
+* View individual ideas
+* Edit and update ideas
+* Delete ideas
+* Archive and restore ideas
+* Search and filter ideas
+* Filter ideas by status
+* Assign priorities, categories, tags, and due dates
+* Add a cover image to an idea
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Checkpoints & Progress
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+* Add multiple checkpoints to an idea
+* Mark checkpoints as completed or incomplete
+* Automatically calculate idea progress
+* Display progress using a visual progress bar
+* Automatically manage idea status based on checkpoint completion:
 
-## Agentic Development
+  * Pending — 0% progress
+  * In Progress — some checkpoints completed
+  * Completed — all checkpoints completed
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Files & Links
 
-```bash
-composer require laravel/boost --dev
+* Attach multiple links to an idea
+* Upload files and documents related to an idea
+* Upload and manage idea cover images
+* Replace or remove uploaded images
+* Validate file types and sizes
+* Store uploaded files using Laravel Storage
+* Keep files and links accessible only to the owner of the idea
 
-php artisan boost:install
+### Profile Management
+
+* Update name
+* Update contact information
+* Upload profile picture
+* Replace profile picture
+* Remove profile picture
+* Email address remains unchanged from the profile section
+
+### Dashboard
+
+* Overview of personal ideas
+* Idea statistics
+* Progress information
+* Recent activity
+* Status and priority summaries
+
+### Activity Tracking
+
+The application records relevant idea activity such as:
+
+* Idea creation
+* Idea updates
+* Checkpoint changes
+* File uploads
+* Link additions
+* Status changes
+* Other important idea actions
+
+### User Interface
+
+* Responsive design
+* Mobile-friendly navigation
+* Desktop navigation
+* Mobile menu
+* Light mode
+* Dark mode
+* Modern cards and forms
+* Progress indicators
+* Status and priority badges
+* Flash messages
+* Interactive UI elements
+
+## Security
+
+Security is enforced on the server side.
+
+* Authentication-protected idea management
+* Users can access only their own ideas
+* Policies are used for authorization
+* Checkpoints, files, and links are protected through ownership rules
+* CSRF protection
+* Server-side validation
+* Secure password hashing
+* Session regeneration and invalidation
+* Controlled file uploads
+* User-specific data access
+
+## Technology Stack
+
+* PHP
+* Laravel
+* MySQL
+* Blade
+* Tailwind CSS
+* Alpine.js
+* Vite
+* Laravel Eloquent ORM
+* Laravel Storage
+* Laravel Policies
+* Laravel Form Requests
+
+## Project Structure
+
+```text
+app/
+├── Enums/
+├── Http/
+│   ├── Controllers/
+│   └── Requests/
+├── Models/
+├── Observers/
+├── Policies/
+├── Providers/
+├── Support/
+└── View/
+    └── Components/
+
+database/
+├── factories/
+├── migrations/
+└── seeders/
+
+resources/
+├── css/
+├── js/
+└── views/
+
+routes/
+└── web.php
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Requirements
 
-## Contributing
+Before running the project, make sure the following are installed:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* PHP
+* Composer
+* Node.js and npm
+* MySQL
+* Laravel Herd or another PHP development environment
 
-## Code of Conduct
+## Installation
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Clone the repository:
 
-## Security Vulnerabilities
+```bash
+git clone <repository-url>
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Move into the project directory:
+
+```bash
+cd learn
+```
+
+Install PHP dependencies:
+
+```bash
+composer install
+```
+
+Install frontend dependencies:
+
+```bash
+npm install
+```
+
+Create the environment file:
+
+```bash
+cp .env.example .env
+```
+
+Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+Configure the database credentials in `.env`.
+
+Run the database migrations:
+
+```bash
+php artisan migrate
+```
+
+Create the public storage link:
+
+```bash
+php artisan storage:link
+```
+
+Build the frontend assets:
+
+```bash
+npm run build
+```
+
+Start the development server:
+
+```bash
+php artisan serve
+```
+
+For frontend development with Vite:
+
+```bash
+npm run dev
+```
+
+## Environment Configuration
+
+Update the `.env` file with your local database configuration.
+
+Example:
+
+```env
+APP_NAME="Ideas Management System"
+APP_ENV=local
+APP_DEBUG=true
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+Never commit your `.env` file or expose credentials, API keys, passwords, or other secrets.
+
+## Storage
+
+The application uses Laravel's filesystem/storage system for uploaded:
+
+* Profile pictures
+* Idea images
+* Documents
+* Files
+
+Run the following command after installation:
+
+```bash
+php artisan storage:link
+```
+
+## Development
+
+This project follows Laravel conventions and aims to keep application logic separated through:
+
+* Controllers
+* Form Requests
+* Eloquent Models
+* Policies
+* Observers
+* Enums
+* Blade Components
+
+The application is designed to remain simple and maintainable without unnecessary packages or complexity.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is for personal/educational development and can be modified as needed.
+
+```
+
+One small recommendation: **don't put your actual database name, username, password, email credentials, or API keys in the README.** Use placeholders as above.
+```
+
