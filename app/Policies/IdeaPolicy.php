@@ -48,7 +48,7 @@ class IdeaPolicy
     }
 
     public function restore(User $user, Idea $idea): bool
-    {
-        return $this->owns($user, $idea) && $idea->isArchived();
-    }
+{
+    return $this->owns($user, $idea);
+}
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Validation\Rule;
 
 class IdeaController extends Controller
 {
@@ -27,10 +28,10 @@ class IdeaController extends Controller
         $ideas = $request->user()->ideas()
             ->withProgress()
             ->withCount(['files', 'links'])
-            ->when($filters['view'] === 'archived', fn ($q) => $q->archived(), fn ($q) => $q->active())
-            ->when($filters['status'], fn ($q, $status) => $q->where('status', $status))
-            ->when($filters['priority'], fn ($q, $priority) => $q->where('priority', $priority))
-            ->when($filters['category'], fn ($q, $category) => $q->where('category', $category))
+            ->when($filters['view'] === 'archived', fn($q) => $q->archived(), fn($q) => $q->active())
+            ->when($filters['status'], fn($q, $status) => $q->where('status', $status))
+            ->when($filters['priority'], fn($q, $priority) => $q->where('priority', $priority))
+            ->when($filters['category'], fn($q, $category) => $q->where('category', $category))
             ->search($filters['search'])
             ->sorted($filters['sort'])
             ->paginate(9)
@@ -79,11 +80,11 @@ class IdeaController extends Controller
             'checkpoints',
             'links',
             'files',
-            'activities' => fn ($q) => $q->limit(30),
+            'activities' => fn($q) => $q->limit(30),
             'activities.user:id,name',
         ])->loadCount([
             'checkpoints',
-            'checkpoints as completed_checkpoints_count' => fn ($q) => $q->where('is_completed', true),
+            'checkpoints as completed_checkpoints_count' => fn($q) => $q->where('is_completed', true),
         ]);
 
         return view('ideas.show', compact('idea'));
@@ -125,7 +126,7 @@ class IdeaController extends Controller
         if (! $syncedStatus && $previousStatus !== $idea->status) {
             $idea->recordActivity(
                 'status',
-                'Status changed from '.$previousStatus->label().' to '.$idea->status->label()
+                'Status changed from ' . $previousStatus->label() . ' to ' . $idea->status->label()
             );
         } elseif (! $syncedStatus) {
             $idea->recordActivity('updated', 'Idea details updated');
@@ -137,8 +138,7 @@ class IdeaController extends Controller
     }
 
     /**
-     * Permanent removal. Child rows go via the FK cascade and the stored files
-     * are removed by the Idea model's `deleting` hook.
+     * Move the idea to Trash.
      */
     public function destroy(Idea $idea): RedirectResponse
     {
@@ -149,7 +149,43 @@ class IdeaController extends Controller
 
         return redirect()
             ->route('ideas.index')
-            ->with('success', '"'.$title.'" was permanently deleted.');
+            ->with('success', '"' . $title . '" was moved to Trash.');
+    }
+
+    /**
+     * Permanently remove a trashed idea and its stored files.
+     */
+    public function forceDestroy(Idea $idea): RedirectResponse
+    {
+        $this->authorize('delete', $idea);
+
+        abort_unless($idea->trashed(), 404);
+
+        $title = $idea->title;
+
+        $idea->forceDelete();
+
+        return redirect()
+            ->route('ideas.trash')
+            ->with('success', '"' . $title . '" was permanently deleted.');
+    }
+
+    /**
+     * Restore an idea from Trash.
+     */
+    public function restore(Idea $idea): RedirectResponse
+    {
+        $this->authorize('restore', $idea);
+
+        abort_unless($idea->trashed(), 404);
+
+        $title = $idea->title;
+
+        $idea->restore();
+
+        return redirect()
+            ->route('ideas.trash')
+            ->with('success', '"' . $title . '" was restored successfully.');
     }
 
     public function archive(Idea $idea): RedirectResponse
@@ -159,18 +195,18 @@ class IdeaController extends Controller
         $idea->forceFill(['archived_at' => now()])->save();
         $idea->recordActivity('archived', 'Idea archived');
 
-        return back()->with('success', '"'.$idea->title.'" was archived.');
+        return back()->with('success', '"' . $idea->title . '" was archived.');
     }
 
-    public function restore(Idea $idea): RedirectResponse
-    {
-        $this->authorize('restore', $idea);
+    // public function restore(Idea $idea): RedirectResponse
+    // {
+    //     $this->authorize('restore', $idea);
 
-        $idea->forceFill(['archived_at' => null])->save();
-        $idea->recordActivity('restored', 'Idea restored from the archive');
+    //     $idea->forceFill(['archived_at' => null])->save();
+    //     $idea->recordActivity('restored', 'Idea restored from the archive');
 
-        return back()->with('success', '"'.$idea->title.'" was restored.');
-    }
+    //     return back()->with('success', '"' . $idea->title . '" was restored.');
+    // }
 
     /**
      * Cover images live on the private disk and are streamed only to their
@@ -227,6 +263,49 @@ class IdeaController extends Controller
 
     protected function storeCover(IdeaRequest $request, int $userId): string
     {
-        return $request->file('cover_image')->store('idea-covers/'.$userId, 'local');
+        return $request->file('cover_image')->store('idea-covers/' . $userId, 'local');
+    }
+
+    public function trash(Request $request): View
+    {
+        $ideas = $request->user()
+            ->ideas()
+            ->onlyTrashed()
+            ->latest('deleted_at')
+            ->paginate(9);
+
+        return view('ideas.trash', [
+            'ideas' => $ideas,
+        ]);
+    }
+
+    public function board(Request $request): View
+    {
+        $ideas = $request->user()
+            ->ideas()
+            ->active()
+            ->withProgress()
+            ->latest('created_at')
+            ->get()
+            ->groupBy(fn(Idea $idea) => $idea->status->value);
+
+        return view('ideas.board', [
+            'ideas' => $ideas,
+        ]);
+    }
+
+    public function updateStatus(Request $request, Idea $idea): RedirectResponse
+    {
+        $this->authorize('update', $idea);
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::enum(IdeaStatus::class)],
+        ]);
+
+        $idea->update([
+            'status' => $validated['status'],
+        ]);
+
+        return back()->with('success', 'Idea status updated successfully.');
     }
 }

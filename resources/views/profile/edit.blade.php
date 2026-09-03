@@ -26,8 +26,7 @@
                         this.removePhoto = false;
                     },
                 }"
-                class="space-y-5"
-            >
+                class="space-y-5">
                 @csrf
                 @method('PATCH')
 
@@ -47,17 +46,17 @@
 
                             <div x-show="! preview">
                                 @if ($user->profile_photo)
-                                    <img src="{{ $user->profilePhotoUrl() }}" alt="{{ $user->name }}"
-                                        class="size-20 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
-                                        x-show="! removePhoto">
-                                    <span x-show="removePhoto" x-cloak
-                                        class="grid size-20 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-semibold text-white">
-                                        {{ $user->initials }}
-                                    </span>
+                                <img src="{{ $user->profilePhotoUrl() }}" alt="{{ $user->name }}"
+                                    class="size-20 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+                                    x-show="! removePhoto">
+                                <span x-show="removePhoto" x-cloak
+                                    class="grid size-20 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-semibold text-white">
+                                    {{ $user->initials }}
+                                </span>
                                 @else
-                                    <span class="grid size-20 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-semibold text-white">
-                                        {{ $user->initials }}
-                                    </span>
+                                <span class="grid size-20 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-semibold text-white">
+                                    {{ $user->initials }}
+                                </span>
                                 @endif
                             </div>
                         </div>
@@ -69,16 +68,15 @@
                                 name="profile_photo"
                                 accept="image/jpeg,image/png,image/webp"
                                 @change="pick($event)"
-                                class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 dark:text-slate-400 dark:file:bg-indigo-500/15 dark:file:text-indigo-300"
-                            >
+                                class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 dark:text-slate-400 dark:file:bg-indigo-500/15 dark:file:text-indigo-300">
                             <x-input-error :messages="$errors->get('profile_photo')" />
 
                             @if ($user->profile_photo)
-                                <label class="flex cursor-pointer items-center gap-2.5 text-sm text-slate-600 select-none dark:text-slate-400">
-                                    <input type="checkbox" name="remove_profile_photo" value="1" x-model="removePhoto"
-                                        class="size-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 dark:border-slate-600 dark:bg-slate-800">
-                                    Remove my current picture
-                                </label>
+                            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-slate-600 select-none dark:text-slate-400">
+                                <input type="checkbox" name="remove_profile_photo" value="1" x-model="removePhoto"
+                                    class="size-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 dark:border-slate-600 dark:bg-slate-800">
+                                Remove my current picture
+                            </label>
                             @endif
                         </div>
                     </div>
@@ -98,7 +96,7 @@
                         <label for="phone" class="label">Contact number</label>
                         <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
                             maxlength="40" autocomplete="tel"
-                            placeholder="+44 7700 900000"
+                            placeholder="+92 300 7000000"
                             class="field @error('phone') field-error @enderror">
                         <x-input-error :messages="$errors->get('phone')" />
                     </div>
@@ -166,6 +164,122 @@
                     <button type="submit"
                         class="w-full rounded-lg border border-rose-300 px-4 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 dark:border-rose-500/40 dark:text-rose-400 dark:hover:bg-rose-500/10">
                         Log out
+                    </button>
+                </form>
+            </div>
+
+            <div class="card-surface p-5 sm:p-6">
+                <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
+                    Change password
+                </h2>
+
+                <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                    Update your password to keep your account secure.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ route('profile.password.update') }}"
+                    class="mt-4 space-y-4">
+                    @csrf
+                    @method('PATCH')
+
+                    <div>
+                        <label for="current_password" class="label">
+                            Current password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="current_password"
+                            name="current_password"
+                            required
+                            autocomplete="current-password"
+                            class="field @error('current_password') field-error @enderror">
+
+                        <x-input-error :messages="$errors->get('current_password')" />
+                    </div>
+
+                    <div>
+                        <label for="password" class="label">
+                            New password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="new-password"
+                            class="field @error('password') field-error @enderror">
+
+                        <x-input-error :messages="$errors->get('password')" />
+                    </div>
+
+                    <div>
+                        <label for="password_confirmation" class="label">
+                            Confirm new password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            required
+                            autocomplete="new-password"
+                            class="field">
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button
+                            type="submit"
+                            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                            Change password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="card-surface border-rose-200 p-5 sm:p-6 dark:border-rose-500/30">
+                <h2 class="text-sm font-semibold text-rose-700 dark:text-rose-400">
+                    Danger zone
+                </h2>
+
+                <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                    Permanently delete your account and all of your ideas and uploaded files.
+                    This action cannot be undone.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ route('profile.destroy') }}"
+                    class="mt-4 space-y-3"
+                    onsubmit="return confirm('Are you sure you want to permanently delete your account? This cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+
+                    <div>
+                        <label for="current_password" class="label">
+                            Current password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="current_password"
+                            name="current_password"
+                            required
+                            autocomplete="current-password"
+                            class="field @error('current_password') field-error @enderror"
+                            placeholder="Enter your current password">
+
+                        <x-input-error :messages="$errors->get('current_password')" />
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500">
+                        Delete my account
                     </button>
                 </form>
             </div>

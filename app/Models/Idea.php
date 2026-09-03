@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class Idea extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * `user_id` is deliberately NOT fillable — ownership is only ever set by
@@ -44,9 +45,9 @@ class Idea extends Model
 
     protected static function booted(): void
     {
-        // DB-level cascades remove the child rows but not the stored files,
-        // so the physical files are cleaned up here before the idea goes.
-        static::deleting(function (self $idea) {
+        // Physical files are cleaned up only on permanent deletion.
+        // A normal SoftDeletes delete() must keep them available for restore.
+        static::forceDeleting(function (self $idea) {
             foreach ($idea->files()->get() as $file) {
                 $file->deleteFromStorage();
             }
@@ -229,7 +230,7 @@ class Idea extends Model
 
         $this->recordActivity(
             'status',
-            'Status changed from '.$previous->label().' to '.$derived->label().' (from checkpoint progress)'
+            'Status changed from ' . $previous->label() . ' to ' . $derived->label() . ' (from checkpoint progress)'
         );
 
         return true;
@@ -298,7 +299,7 @@ class Idea extends Model
     {
         return $query->withCount([
             'checkpoints',
-            'checkpoints as completed_checkpoints_count' => fn (Builder $q) => $q->where('is_completed', true),
+            'checkpoints as completed_checkpoints_count' => fn(Builder $q) => $q->where('is_completed', true),
         ]);
     }
 
@@ -310,7 +311,7 @@ class Idea extends Model
             return $query;
         }
 
-        $like = '%'.str_replace(['%', '_'], ['\%', '\_'], $term).'%';
+        $like = '%' . str_replace(['%', '_'], ['\%', '\_'], $term) . '%';
 
         return $query->where(function (Builder $q) use ($like) {
             $q->where('title', 'like', $like)

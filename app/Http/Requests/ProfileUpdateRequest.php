@@ -41,7 +41,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:40', 'regex:/^[0-9+()\-.\s]+$/'],
+            'phone' => ['nullable', 'regex:/^(03\d{9}|\+92 3\d{2} \d{7}|\+923\d{9})$/',],
             'profile_photo' => [
                 'nullable',
                 'image',
@@ -60,7 +60,7 @@ class ProfileUpdateRequest extends FormRequest
         $limit = UploadLimits::label(self::maxKilobytes());
 
         return [
-            'phone.regex' => 'The contact number may only contain digits, spaces and + ( ) - . characters.',
+            'phone.regex' => 'Please enter a valid Pakistani phone number, e.g. 03006893456 or +92 300 6543234.',
             'profile_photo.max' => "The profile picture may not be larger than {$limit}.",
             'profile_photo.mimes' => 'The profile picture must be a JPG, PNG or WebP image.',
             // Raised by PHP itself when the file exceeds upload_max_filesize,

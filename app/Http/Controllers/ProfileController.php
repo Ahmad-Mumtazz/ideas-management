@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -38,7 +40,7 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_photo')) {
             $user->deleteProfilePhoto();
             $user->profile_photo = $request->file('profile_photo')
-                ->store('profile-photos/'.$user->id, 'local');
+                ->store('profile-photos/' . $user->id, 'local');
         } elseif ($request->boolean('remove_profile_photo')) {
             $user->deleteProfilePhoto();
             $user->profile_photo = null;
@@ -49,6 +51,53 @@ class ProfileController extends Controller
         return redirect()
             ->route('profile.edit')
             ->with('success', 'Your profile was updated.');
+    }
+
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+
+        foreach ($user->ideas()->get() as $idea) {
+            $idea->delete();
+        }
+
+        $user->deleteProfilePhoto();
+        $user->delete();
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->with('success', 'Your account has been permanently deleted.');
+    }
+
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = $request->user();
+
+        $user->update([
+            'password' => $request->password,
+        ]);
+
+        $request->session()->regenerate();
+
+        return redirect()
+            ->route('profile.edit')
+            ->with('success', 'Your password was changed successfully.');
     }
 
     /**
